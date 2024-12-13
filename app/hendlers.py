@@ -21,12 +21,20 @@ async def cmd_start(message: Message):
     await rq.set_user(message.from_user.id)
     await message.answer('Добро пожаловать в магазин кросовок!', reply_markup=kb.main) # При отправке сообщения "Привет" откроется клавиатура
     
+@router.message(F.text == 'Каталог')
+async def catalog(message: Message):
+    await message.answer('Выберите категорию товара', reply_markup= await kb.catigories())
+
+@router.callback_query(F.data.startswith('category_'))
+async def category(callback: CallbackQuery):
+    await callback.answer('Вы выбрали категорию')
+    await callback.message.answer('Выберете товар по категории', 
+                                  reply_markup= await kb.items(callback.data.split('_')[1]))
 
 
 # @router.message(Command('help'))
 # async def cmd_help(message: Message):
 #     await message.answer('Вы нажали на кнопку помощи')
-
 # @router.message(F.text == 'Каталог')
 # async def catalog(message: Message):
 #     await message.answer('Выберете категорию товара', reply_markup=kb.catalog)
